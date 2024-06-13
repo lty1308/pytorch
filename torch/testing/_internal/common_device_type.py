@@ -706,12 +706,12 @@ PYTORCH_TESTING_DEVICE_EXCEPT_FOR_KEY = 'PYTORCH_TESTING_DEVICE_EXCEPT_FOR'
 PYTORCH_TESTING_DEVICE_FOR_CUSTOM_KEY = 'PYTORCH_TESTING_DEVICE_FOR_CUSTOM'
 
 
-def get_desired_device_type_test_bases(except_for=None, only_for=None, include_lazy=False, allow_mps=False):
+def get_desired_device_type_test_bases(except_for=None, only_for=None, include_lazy=False, allow_mps=False, allow_xpu=False):
     # allow callers to specifically opt tests into being tested on MPS, similar to `include_lazy`
     test_bases = device_type_test_bases.copy()
     if allow_mps and TEST_MPS and MPSTestBase not in test_bases:
         test_bases.append(MPSTestBase)
-    if only_for == 'xpu' and TEST_XPU and XPUTestBase not in test_bases:
+    if allow_xpu and TEST_XPU and XPUTestBase not in test_bases:
         test_bases.append(XPUTestBase)
     if TEST_HPU and HPUTestBase not in test_bases:
         test_bases.append(HPUTestBase)
@@ -758,7 +758,9 @@ def get_desired_device_type_test_bases(except_for=None, only_for=None, include_l
 # device-specific tests (NB: this supports additional @parametrize usage).
 #
 # See note "Writing Test Templates"
-def instantiate_device_type_tests(generic_test_class, scope, except_for=None, only_for=None, include_lazy=False, allow_mps=False):
+# TODO: remove "allow_xpu" option after Interl GPU support all test case instantiate by this function.
+def instantiate_device_type_tests(generic_test_class, scope, except_for=None, only_for=None, include_lazy=False,
+                                  allow_mps=False, allow_xpu=False):
     # Removes the generic test class from its enclosing scope so its tests
     # are not discoverable.
     del scope[generic_test_class.__name__]
@@ -778,7 +780,7 @@ def instantiate_device_type_tests(generic_test_class, scope, except_for=None, on
     generic_tests = [x for x in generic_members if x.startswith('test')]
 
     # Creates device-specific test cases
-    for base in get_desired_device_type_test_bases(except_for, only_for, include_lazy, allow_mps):
+    for base in get_desired_device_type_test_bases(except_for, only_for, include_lazy, allow_mps, allow_xpu):
         class_name = generic_test_class.__name__ + base.device_type.upper()
 
         # type set to Any and suppressed due to unsupport runtime class:
@@ -1100,6 +1102,9 @@ def _has_sufficient_memory(device, size):
         if device == 'cuda':
             device = 'cuda:0'
         return torch.cuda.memory.mem_get_info(device)[0] >= size
+
+    if device == 'xpu':
+        raise unittest.SkipTest('TODO: Memory availability checks for Intel GPU?')
 
     if device == 'xla':
         raise unittest.SkipTest('TODO: Memory availability checks for XLA?')

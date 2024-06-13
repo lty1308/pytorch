@@ -2974,7 +2974,7 @@ class CommonTemplate:
             check_lowp=True,
         )
 
-    @expectedFailureXPU
+    @skipIfXpu
     def test_mm_mixed_dtype(self):
         def fn(a, b):
             return torch.mm(a, b)
@@ -2988,7 +2988,7 @@ class CommonTemplate:
         with self.assertRaisesRegex(RuntimeError, msg):
             fn(t1, t2)
 
-    @expectedFailureXPU
+    @skipIfXpu
     def test_linear_mixed_dtype(self):
         class Net(nn.Module):
             def __init__(self):
@@ -6324,7 +6324,6 @@ class CommonTemplate:
                 (a, b),
             )
 
-    @skipIfXpu
     def test_nll_loss_backward(self):
         def fn(a, b, c):
             return aten.nll_loss_backward(
