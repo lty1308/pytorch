@@ -2767,3 +2767,13 @@ def warn_once(msg, stacklevel=1):
         return
     warn_once_cache.add(msg)
     warnings.warn(msg, stacklevel=stacklevel + 1)
+
+
+@contextlib.contextmanager
+def _disable_saved_tensors_hooks_during_tracing():
+    # See NOTE: [Deferring tensor pack/unpack hooks until runtime]
+    try:
+        prior = torch._C._autograd._saved_tensors_hooks_set_tracing(True)
+        yield
+    finally:
+        torch._C._autograd._saved_tensors_hooks_set_tracing(prior)
