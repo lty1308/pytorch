@@ -1058,6 +1058,12 @@ class skipCUDAIf(skipIf):
     def __init__(self, dep, reason):
         super().__init__(dep, reason, device_type='cuda')
 
+# Skips a test on XPU if the condition is true.
+class skipXPUIf(skipIf):
+
+    def __init__(self, dep, reason):
+        super().__init__(dep, reason, device_type='xpu')
+
 # Skips a test on Lazy if the condition is true.
 class skipLazyIf(skipIf):
 
