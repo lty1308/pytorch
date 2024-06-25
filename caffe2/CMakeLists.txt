@@ -558,6 +558,10 @@ if(USE_CUDA)
     append_filelist("libtorch_cuda_distributed_base_sources" Caffe2_GPU_SRCS)
     if(NOT WIN32)
       append_filelist("libtorch_cuda_distributed_extra_sources" Caffe2_GPU_SRCS)
+      if(OSS_BUILD_WITH_FB_FOLDERS)
+        list(APPEND Caffe2_GPU_SRCS ${TORCH_SRC_DIR}/csrc/distributed/c10d/fb/NCCLUtils.cpp)
+      endif()
+
       set_source_files_properties(
         ${TORCH_SRC_DIR}/csrc/distributed/c10d/intra_node_comm.cpp
         PROPERTIES COMPILE_FLAGS "-DPYTORCH_C10_DRIVER_API_SUPPORTED=1"
@@ -608,6 +612,9 @@ if(USE_ROCM)
     append_filelist("libtorch_cuda_distributed_base_sources" Caffe2_HIP_SRCS)
     if(NOT WIN32)
       append_filelist("libtorch_cuda_distributed_extra_sources" Caffe2_HIP_SRCS)
+      if(OSS_BUILD_WITH_FB_FOLDERS)
+        list(APPEND Caffe2_HIP_SRCS ${TORCH_SRC_DIR}/csrc/distributed/c10d/fb/NCCLUtils.cpp)
+      endif()
     endif()
   endif()
   # caffe2_nvrtc's stubs to driver APIs are useful for HIP.

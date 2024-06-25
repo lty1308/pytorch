@@ -180,5 +180,7 @@ function(caffe2_print_configuration_summary)
   # coreml
   message(STATUS "  USE_COREML_DELEGATE     : ${USE_COREML_DELEGATE}")
   message(STATUS "  BUILD_LAZY_TS_BACKEND   : ${BUILD_LAZY_TS_BACKEND}")
-  message(STATUS "  USE_ROCM_KERNEL_ASSERT : ${USE_ROCM_KERNEL_ASSERT}")
+  message(STATUS "  USE_ROCM_KERNEL_ASSERT  : ${USE_ROCM_KERNEL_ASSERT}")
+  message(STATUS "  OSS_BUILD_WITH_FB_FOLDERS : ${OSS_BUILD_WITH_FB_FOLDERS}")
+  message(STATUS "  USE_C10D_NCCL             : ${USE_C10D_NCCL}")
 endfunction()

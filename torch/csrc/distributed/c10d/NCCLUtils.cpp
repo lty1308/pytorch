@@ -63,7 +63,8 @@ void NCCLComm::waitUntilInitialized(int timeoutSecs) {
   }
 }
 
-#if defined(NCCL_HAS_COMM_SPLIT) && !defined(FBCODE_CAFFE2)
+#if defined(NCCL_HAS_COMM_SPLIT) && !defined(FBCODE_CAFFE2) && \
+!defined(OSS_BUILD_WITH_FB_FOLDERS)
 // last argument to split() API is not used to support
 // multiple implementations
 std::shared_ptr<NCCLComm> NCCLComm::split(
@@ -83,7 +84,7 @@ std::shared_ptr<NCCLComm> NCCLComm::split(
 }
 #endif
 
-#ifndef FBCODE_CAFFE2
+#if !defined(FBCODE_CAFFE2) && !defined(OSS_BUILD_WITH_FB_FOLDERS)
 bool shouldBroadcastNCCLUniqueID(bool isSendRecvSelf) {
   // For point-to-point communication on the same process, don't need broadcast.
   return !isSendRecvSelf;
